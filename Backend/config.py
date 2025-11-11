@@ -1,0 +1,5 @@
+MYSQL_HOST = 'localhost'
+MYSQL_USER = 'root'
+MYSQL_PASSWORD = 'terri316'
+MYSQL_DB = 'profinal'
+HEX_SEC_KEY= 'd5fb8c4fa8bd46638dadc4e751e0d68d'
