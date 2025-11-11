@@ -5,7 +5,7 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 
-CORS(app)
+CORS(app, supports_credentials=True, origins=["http://localhost:3000"])
 
 app.config['SECRET_KEY'] = config.HEX_SEC_KEY
 app.config['MYSQL_HOST'] = config.MYSQL_HOST
@@ -20,23 +20,35 @@ def raiz():
     return render_template("login.html")
 
 ## 111
-# LOG in, Verificar usuario
+# LOG in, Verificar usuario LISTO
 @app.route('/login', methods=['POST'])
 def login():
-    email = request.form['email']
-    password = request.form['password']
+    data = request.get_json()  
+
+    email = data.get('email')
+    password = data.get('password')
 
     cur = mysql.connection.cursor()
-    cur.execute("SELECT * FROM cliente WHERE correo = %s AND contrasena = %s", (email, password))
+    cur.execute("SELECT id_cliente, nombre, apellidos, correo FROM cliente WHERE correo = %s AND contrasena = %s", (email, password))
     user = cur.fetchone()
     cur.close()
 
-    if user is not None:
+    if user:
         session['email'] = email
         session['id_cliente'] = user[0]
-        return redirect(url_for('log')) #compra carrito usuario log # Pagina con el usuario desbloqueado 
-    else:
-        return render_template('noesta.html') # ,message= "Error credenciales" <<< Presentar sino
+
+        return jsonify({
+            "success": True,
+            "user": {
+                "id": user[0],
+                "name": user[1],
+                "lastName": user[2],
+                "email": user[3]
+            }
+        })
+
+    return jsonify({"success": False, "message": "Credenciales incorrectas"}), 401
+
 # 111
 # Añadir un nuevo usuario
 @app.route('/Sing', methods=['POST'])
@@ -66,11 +78,11 @@ def Sing():
         return render_template('noesta.html') # , mensaje = "Error en los datos" # <<< Presentar sino los puse bien
     
 
-# Salir de sesion
-@app.route('/logout')
+# Salir de sesion 
+@app.route('/logout', methods=['GET'])
 def logout():
     session.clear()
-    return redirect(url_for('/')) # <<< Te redirige a la pagina inicial
+    return jsonify({"message": "logged_out"}), 200
    
 # Te envia a la pagina ya con el inicio de sesion
 @app.route('/log', methods=['GET'])

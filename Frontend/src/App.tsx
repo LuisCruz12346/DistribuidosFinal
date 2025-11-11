@@ -94,25 +94,52 @@ export default function App() {
     setCart([]);
     localStorage.setItem('cart', JSON.stringify([]));
   };
+// Inicio de sesion listo
+  const login = async (email: string, password: string) => {
+  try {
+      const response = await fetch("http://localhost:5000/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({email, password }),
+      credentials: "include", 
+    });
 
-  const login = (email: string, password: string) => {
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
-    const foundUser = users.find((u: User) => u.email === email && u.password === password);
-    if (foundUser) {
-      setUser(foundUser);
-      localStorage.setItem('user', JSON.stringify(foundUser));
-      setCurrentPage('home');
-      return true;
-    }
+    const data = await response.json();
+    console.log("Respuesta del servidor:", data);
+
+    if (!data.success) return false;
+
+    setUser(data.user);
+    localStorage.setItem("user", JSON.stringify(data.user));
+    
+    setCurrentPage("home");
+    
+    return true;
+
+  } catch (error) {
+    console.error(error);
     return false;
-  };
+  }
+};
 
-  const logout = () => {
+// Salir de sesion 
+const logout = async () => {
+  try {
+    await fetch("http://localhost:5000/logout", {
+      method: "GET",
+      credentials: "include",   // <<< IMPORTANTE PARA BORRAR SESIÓN
+    });
+
     setUser(null);
-    localStorage.removeItem('user');
-    setCurrentPage('home');
-  };
+    localStorage.removeItem("user");
+    setCurrentPage("home");
 
+  } catch (error) {
+    console.error("Error en logout:", error);
+  }
+};
+
+// Registrarse 
   const register = (userData: User) => {
     const users = JSON.parse(localStorage.getItem('users') || '[]');
     
