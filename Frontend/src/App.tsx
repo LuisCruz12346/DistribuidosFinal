@@ -122,7 +122,7 @@ export default function App() {
   }
 };
 
-// Salir de sesion 
+// Salir de sesion LISTO
 const logout = async () => {
   try {
     await fetch("http://localhost:5000/logout", {
@@ -139,23 +139,37 @@ const logout = async () => {
   }
 };
 
-// Registrarse 
-  const register = (userData: User) => {
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
-    
-    // Verificar si el email ya existe
-    const emailExists = users.some((u: User) => u.email === userData.email);
-    if (emailExists) {
+// Registrarse Nuevo usuarios LISTO
+const register = async (userData: User) => {
+  try {
+    const response = await fetch("http://localhost:5000/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",        // <<< Necesario si usas sesión
+      body: JSON.stringify(userData)
+    });
+
+    const data = await response.json();
+    console.log("Respuesta del servidor:", data);
+
+    if (!data.success) {
+      alert(data.message);
       return false;
     }
-    
-    users.push(userData);
-    localStorage.setItem('users', JSON.stringify(users));
-    setUser(userData);
-    localStorage.setItem('user', JSON.stringify(userData));
-    setCurrentPage('home');
+
+    // Si fue exitoso, guardamos usuario localmente
+    //setUser(userData);
+    //localStorage.setItem("user", JSON.stringify(userData));
+    setCurrentPage("home");
     return true;
-  };
+
+  } catch (error) {
+    console.error("Error en register:", error);
+    return false;
+  }
+};
+
+
 
   const addOrder = (order: Order) => {
     if (!user) return;

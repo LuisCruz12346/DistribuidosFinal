@@ -50,35 +50,46 @@ def login():
     return jsonify({"success": False, "message": "Credenciales incorrectas"}), 401
 
 # 111
-# Añadir un nuevo usuario
-@app.route('/Sing', methods=['POST'])
-def Sing():
-    email = request.form['email']
-    direccion = request.form['direccion']
-    nombre = request.form['nombre']
-    apellido = request.form['apellido']
-    password = request.form['password']
-    
-    if email and nombre and direccion and password:
-        try:
-            cur = mysql.connection.cursor()
-            sql = "INSERT INTO cliente (correo, direccion, nombre, apellidos, contrasena) VALUES (%s, %s, %s, %s, %s)"
-            data = (email, direccion, nombre, apellido, password)
-            cur.execute(sql, data)
-            mysql.connection.commit()
-            # Me envia al inicio para que haga el log in
-            return redirect(url_for('log'))
-        except Exception as e:
-            mysql.connection.rollback()   # Revierte cambios si hubo error
-            print("ERROR:", e)     
-            return render_template("noesta.html") # , mensaje="Correo ya registrado"
-        finally:
-            cur.close()
-    else:
-        return render_template('noesta.html') # , mensaje = "Error en los datos" # <<< Presentar sino los puse bien
-    
+# Añadir un nuevo usuario LISTO
+@app.route('/register', methods=['POST'])
+def register():
+    data = request.get_json()  # Recibe JSON
 
-# Salir de sesion 
+    email = data.get('email')
+    direccion = data.get('address')
+    nombre = data.get('name')
+    apellido = data.get('lastName')
+    password = data.get('password')
+
+    # Validación básica
+    if not all([email, nombre, apellido, direccion, password]):
+        return jsonify({"success": False, "message": "Datos incompletos"}), 400
+
+    try:
+        cur = mysql.connection.cursor()
+
+        # Revisar si el correo ya existe
+        cur.execute("SELECT id_cliente FROM cliente WHERE correo = %s", (email,))
+        existe = cur.fetchone()
+        if existe:
+            return jsonify({"success": False, "message": "Correo ya registrado"}), 409
+
+        sql = """INSERT INTO cliente (correo, direccion, nombre, apellidos, contrasena)
+                 VALUES (%s, %s, %s, %s, %s)"""
+        cur.execute(sql, (email, direccion, nombre, apellido, password))
+        mysql.connection.commit()
+
+        return jsonify({"success": True, "message": "Registrado correctamente"}), 201
+
+    except Exception as e:
+        mysql.connection.rollback()
+        print("ERROR:", e)
+        return jsonify({"success": False, "message": "Error en servidor"}), 500
+
+    finally:
+        cur.close()    
+
+# Salir de sesion LISTO 
 @app.route('/logout', methods=['GET'])
 def logout():
     session.clear()
