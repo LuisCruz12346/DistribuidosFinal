@@ -4,7 +4,7 @@ import { toast } from 'sonner@2.0.3';
 
 type SearchProps = {
   user: User | null;
-  searchQuery: string;
+  searchQuery: Product[];
   onNavigate: (page: string) => void;
   onAddToCart: (product: Product) => void;
   onSearch: (query: string) => void;
@@ -12,56 +12,9 @@ type SearchProps = {
   onLogout: () => void;
 };
 
-const allProducts: Product[] = [
-  {
-    id: '1',
-    name: 'Audífonos Inalámbricos',
-    price: 1299,
-    image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3aXJlbGVzcyUyMGhlYWRwaG9uZXN8ZW58MXx8fHwxNzYyMzA0MTQ2fDA&ixlib=rb-4.1.0&q=80&w=1080',
-    category: 'Electrónica',
-  },
-  {
-    id: '2',
-    name: 'Reloj Moderno',
-    price: 2499,
-    image: 'https://images.unsplash.com/photo-1745256375848-1d599594635d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjB3YXRjaHxlbnwxfHx8fDE3NjIyNDY1ODN8MA&ixlib=rb-4.1.0&q=80&w=1080',
-    category: 'Accesorios',
-  },
-  {
-    id: '3',
-    name: 'Laptop Premium',
-    price: 18999,
-    image: 'https://images.unsplash.com/photo-1511385348-a52b4a160dc2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsYXB0b3AlMjBjb21wdXRlcnxlbnwxfHx8fDE3NjIyNTE0MDJ8MA&ixlib=rb-4.1.0&q=80&w=1080',
-    category: 'Electrónica',
-  },
-  {
-    id: '4',
-    name: 'Cafetera Moderna',
-    price: 899,
-    image: 'https://images.unsplash.com/photo-1608354580875-30bd4168b351?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb2ZmZWUlMjBtYWtlcnxlbnwxfHx8fDE3NjIzMTQzMDZ8MA&ixlib=rb-4.1.0&q=80&w=1080',
-    category: 'Hogar',
-  },
-  {
-    id: '5',
-    name: 'Mochila Urbana',
-    price: 799,
-    image: 'https://images.unsplash.com/photo-1680039211156-66c721b87625?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxiYWNrcGFjayUyMGJhZ3xlbnwxfHx8fDE3NjIyMjU0NDJ8MA&ixlib=rb-4.1.0&q=80&w=1080',
-    category: 'Accesorios',
-  },
-  {
-    id: '6',
-    name: 'Lentes de Sol',
-    price: 599,
-    image: 'https://images.unsplash.com/photo-1663585703603-9be01a72a62a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdW5nbGFzc2VzJTIwZmFzaGlvbnxlbnwxfHx8fDE3NjIyMjc5NTF8MA&ixlib=rb-4.1.0&q=80&w=1080',
-    category: 'Accesorios',
-  },
-];
 
 export function Search({ user, searchQuery, onNavigate, onAddToCart, onSearch, cartItemsCount, onLogout }: SearchProps) {
-  const filteredProducts = allProducts.filter(product =>
-    product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    product.category.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredProducts = searchQuery;
 
   const handleAddToCart = (product: Product) => {
     onAddToCart(product);

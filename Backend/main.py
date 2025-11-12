@@ -144,26 +144,64 @@ def categoria():
     else:
         return render_template('noesta.html')
 
-# Ve la informacion que tiene el usuario en el carrito
-@app.route("/carrito", methods=["GET"])
+# Ve la informacion que tiene el usuario en el carrito PARCIALMENTE LISTO
+@app.route("/carrito", methods=["GET"]) 
 def carrito():
+    # Validar sesión activa
     if 'id_cliente' not in session:
-        return "No hay usuario logeado", 401 # ajustar a no logueado
+        return jsonify({"success": False, "message": "No hay usuario logeado"}), 401
 
-    id = session['id_cliente']
+    id_cliente = session['id_cliente']
 
-    cursor = mysql.connection.cursor()
-    cursor.execute("""
-        SELECT carrito.id_carrito, carrito.cantidad, 
-               productos.nombre, productos.precio, productos.categoria
-        FROM carrito
-        INNER JOIN productos ON carrito.id_producto = productos.id_producto
-        WHERE carrito.id_cliente = %s;
-    """, (id,))
-    datos = cursor.fetchall()
-    cursor.close()
-    # Falta regresar el total de carrito
-    return render_template('carrito.html', datos=datos)
+    try:
+        # Ejecutar la misma consulta
+        cursor = mysql.connection.cursor()
+        cursor.execute("""
+            SELECT carrito.id_carrito, carrito.cantidad, 
+                   productos.nombre, productos.precio, productos.categoria
+            FROM carrito
+            INNER JOIN productos ON carrito.id_producto = productos.id_producto
+            WHERE carrito.id_cliente = %s;
+        """, (id_cliente,))
+        datos = cursor.fetchall()
+        cursor.close()
+
+        # Convertir los resultados en JSON
+        carrito_items = []
+        total = 0
+        for item in datos:
+            id_carrito = item[0]
+            cantidad = item[1]
+            nombre = item[2]
+            precio = float(item[3])
+            categoria = item[4]
+
+            subtotal = precio * cantidad
+            total += subtotal
+
+            carrito_items.append({
+                "id_carrito": id_carrito,
+                "name": nombre,
+                "price": precio,
+                "category": categoria,
+                "quantity": cantidad,
+                "subtotal": subtotal
+            })
+
+        # Enviar JSON a React
+        return jsonify({
+            "success": True,
+            "cart": carrito_items,
+            "total": total
+        }), 200
+
+    except Exception as e:
+        print("Error al obtener carrito:", e)
+        return jsonify({
+            "success": False,
+            "message": "Error al obtener el carrito"
+        }), 500
+
 
 # Agregar cosas al carrito
 @app.route("/AgreCarrito", methods=["POST"])

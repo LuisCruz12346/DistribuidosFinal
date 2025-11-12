@@ -49,25 +49,39 @@ export default function App() {
   }
 }, []);
 
-// Si el usuario existe, carga su carrito
+// Si el usuario existe, carga su carrito PARCIALMENTE LISTO
 useEffect(() => {
-  if (user) {
-    const savedCart = localStorage.getItem('cart');
-    if (savedCart) {
-      setCart(JSON.parse(savedCart));
+  const fetchCart = async () => {
+    if (!user) return;
+
+    try {
+      const response = await fetch("http://localhost:5000/carrito", {
+        method: "GET",
+        credentials: "include", // enviar cookies de sesión
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        setCart(data.cart);
+        console.log("Carrito cargado:", data.cart);
+      } else {
+        console.warn(data.message);
+      }
+    } catch (error) {
+      console.error("Error al obtener carrito:", error);
     }
-  } else {
-    // Si no hay usuario, limpiar el carrito
-    setCart([]);
-  }
+  };
+
+  fetchCart();
 }, [user]);
 
+
 // Guardar carrito cada vez que cambia
-useEffect(() => {
-  if (user) { // solo si hay usuario logueado
-    localStorage.setItem('cart', JSON.stringify(cart));
-  }
-}, [cart, user]);
+//useEffect(() => {
+//  if (user) { // solo si hay usuario logueado
+//    localStorage.setItem('cart', JSON.stringify(cart));
+//  }
+// }, [cart, user]);
 
   const addToCart = (product: Product) => {
     setCart(prev => {
@@ -140,6 +154,7 @@ const logout = async () => {
     });
 
     setUser(null);
+    setCart([]); // Esto limpia el carrito en memoria (estado de React)
     localStorage.removeItem("user");
     localStorage.removeItem('cart');
     setCurrentPage("home");
