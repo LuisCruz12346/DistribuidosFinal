@@ -9,7 +9,7 @@ import { Checkout } from './components/Checkout';
 import { OrderConfirmation } from './components/OrderConfirmation';
 
 export type Product = {
-  id: string;
+  id: number;
   name: string;
   price: number;
   image: string;
@@ -195,7 +195,7 @@ const register = async (userData: User) => {
 };
 
 
-  const addOrder = (order: Order) => {
+const addOrder = (order: Order) => {
     if (!user) return;
     const orders = JSON.parse(localStorage.getItem(`orders_${user.email}`) || '[]');
     orders.push(order);
@@ -207,10 +207,30 @@ const register = async (userData: User) => {
     return JSON.parse(localStorage.getItem(`orders_${user.email}`) || '[]');
   };
 
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-    setCurrentPage('search');
-  };
+// Buscar productos en la base de datos LISTO
+const handleSearch = async (query: string) => {
+  try {
+    const response = await fetch("http://localhost:5000/productos", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query }), // Enviar el texto de búsqueda
+      credentials: "include",
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error del servidor: ${response.status}`);
+    }
+
+    const data = await response.json(); // Recibir productos en JSON
+    console.log("Productos encontrados:", data);
+    setSearchQuery(data); // Aquí data es un arreglo de productos
+    setCurrentPage("search");
+
+  } catch (error) {
+    console.error("Error al buscar productos:", error);
+  }
+};
+
 
   return (
     <div className="min-h-screen bg-white">

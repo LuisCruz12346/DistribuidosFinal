@@ -119,16 +119,30 @@ def usuario():
 # Buscar productos
 @app.route("/productos", methods=["POST"])
 def productos():
-    Busqueda = request.form['producto']
-
-    cursor = mysql.connection.cursor()
-    cursor.execute("SELECT * FROM productos WHERE nombre REGEXP %s;", (Busqueda,))
-    datos = cursor.fetchall()
-    cursor.close()    
-    if datos is not None:
-        return render_template('datos.html', datos=datos)
+    data = request.get_json()
+    Busqueda = data.get('query')
+    try :
+        cursor = mysql.connection.cursor()
+        cursor.execute("SELECT * FROM productos WHERE nombre REGEXP %s;", (Busqueda,))
+        datos = cursor.fetchall()
+        cursor.close()
+    except Exception as e:
+        print("Error al consultar")
+        return jsonify([])
+    if datos:
+        # Convertir el resultado en un arreglo de diccionarios JSON
+        productos = []
+        for d in datos:
+            productos.append({
+                "id": d[0],
+                "name": d[1],
+                "category": d[3],
+                "price": d[2],
+                "image": "https://images.unsplash.com/photo-1663585703603-9be01a72a62a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdW5nbGFzc2VzJTIwZmFzaGlvbnxlbnwxfHx8fDE3NjIyMjc5NTF8MA&ixlib=rb-4.1.0&q=80&w=1080"
+            })
+        return jsonify(productos)
     else:
-        return render_template('noesta.html', datos=datos) # mensaje = No se reconoce el producto << Cambiar la pagina
+        return jsonify([])
 
 # Buscar por categoria
 @app.route("/categoria", methods=["POST"])

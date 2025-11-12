@@ -5,6 +5,7 @@ import { toast } from 'sonner@2.0.3';
 type SearchProps = {
   user: User | null;
   searchQuery: Product[];
+  searchTerm: string; // 🔹 nuevo
   onNavigate: (page: string) => void;
   onAddToCart: (product: Product) => void;
   onSearch: (query: string) => void;
@@ -12,8 +13,7 @@ type SearchProps = {
   onLogout: () => void;
 };
 
-
-export function Search({ user, searchQuery, onNavigate, onAddToCart, onSearch, cartItemsCount, onLogout }: SearchProps) {
+export function Search({ user, searchQuery,searchTerm, onNavigate, onAddToCart, onSearch, cartItemsCount, onLogout }: SearchProps) {
   const filteredProducts = searchQuery;
 
   const handleAddToCart = (product: Product) => {
@@ -34,7 +34,7 @@ export function Search({ user, searchQuery, onNavigate, onAddToCart, onSearch, c
       <div className="max-w-7xl mx-auto px-4 py-12">
         <div className="mb-8">
           <h1 className="mb-2">Resultados de búsqueda</h1>
-          <p className="text-gray-600">"{searchQuery}" ({filteredProducts.length} resultados)</p>
+          <p className="text-gray-600">"{searchTerm}" ({filteredProducts.length} resultados)</p>
         </div>
 
         {filteredProducts.length === 0 ? (
