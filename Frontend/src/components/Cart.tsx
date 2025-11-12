@@ -16,6 +16,8 @@ const SHIPPING_COST = 150;
 export function Cart({ user, cart, onNavigate, onUpdateQuantity, onRemoveFromCart, onLogout }: CartProps) {
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const total = subtotal + SHIPPING_COST;
+  console.log("Soy el carrito")
+  console.log(cart); 
 
   const handleCheckout = () => {
     if (!user) {
@@ -79,7 +81,7 @@ export function Cart({ user, cart, onNavigate, onUpdateQuantity, onRemoveFromCar
                   </div>
                   <div className="flex flex-col items-end justify-between">
                     <button
-                      onClick={() => onRemoveFromCart(item.id)}
+                      onClick={() => onRemoveFromCart(item.id_carrito)}
                       className="text-gray-400 hover:text-red-500"
                     >
                       <Trash2 className="h-5 w-5" />

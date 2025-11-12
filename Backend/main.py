@@ -217,56 +217,88 @@ def carrito():
         }), 500
 
 
-# Agregar cosas al carrito
+# Agregar cosas al carrito Ya me agrega al carrito revisar errores
 @app.route("/AgreCarrito", methods=["POST"])
 def AgreCarrito():
     if 'id_cliente' not in session:
-        return "No hay usuario logeado", 401  # el usuario no ha iniciado sesión
+        return jsonify({"error": "No hay usuario logeado"}), 401
 
-    id_cliente = session['id_cliente']
-    id_producto = request.form.get('producto')
-    cantidad = request.form.get('cantidad')
-    # --------- Esta parte se puede quitar si no se deja como casilla blanca 
-    if not id_producto or not cantidad:
-        return "Faltan datos", 400 
+    data = request.get_json()
+    id_producto = data.get("id_producto")
 
-    # Convertir cantidad a entero
-    try:
-        cantidad = int(cantidad)
-    except ValueError:
-        return "La cantidad debe ser un número", 400
-    # --------------
+    if not id_producto:
+        return jsonify({"error": "Faltan datos"}), 400
+
     try:
         cursor = mysql.connection.cursor()
 
-        # Verificar si ya existe ese producto en el carrito del usuario
+        # Verificar si ya existe el producto
         cursor.execute("""
             SELECT cantidad FROM carrito WHERE id_cliente = %s AND id_producto = %s;
-        """, (id_cliente, id_producto))
+        """, (session['id_cliente'], id_producto))
         existing = cursor.fetchone()
 
         if existing:
-            # Si ya esta en el carrito, solo actualiza la cantidad
+            nueva_cantidad = existing[0] + 1
             cursor.execute("""
-                UPDATE carrito SET cantidad = cantidad + %s
+                UPDATE carrito SET cantidad = %s
                 WHERE id_cliente = %s AND id_producto = %s;
-            """, (cantidad, id_cliente, id_producto))
+            """, (nueva_cantidad, session['id_cliente'], id_producto))
         else:
-            # Insertar nuevo registro
             cursor.execute("""
                 INSERT INTO carrito (id_cliente, id_producto, cantidad)
                 VALUES (%s, %s, %s);
-            """, (id_cliente, id_producto, cantidad))
+            """, (session['id_cliente'], id_producto, 1))
 
         mysql.connection.commit()
         cursor.close()
 
-        return render_template('siesta.html')
+        return jsonify({"mensaje": "Producto agregado correctamente"})
 
     except Exception as e:
         mysql.connection.rollback()
+        if cursor:
+            cursor.close()
+        return jsonify({"error": f"Error al agregar al carrito: {e}"}), 500
+
+# Borrar un producto del carrito
+@app.route("/borCarr", methods=["POST"])
+def borCarr():
+    if 'id_cliente' not in session:
+        return jsonify({"error": "No hay usuario logeado"}), 401
+
+    data = request.get_json()
+    id_carrito = data.get("id_carrito")
+    print(data)
+    if not id_carrito:
+        return jsonify({"error": "Faltan datos"}), 400
+
+    cursor = None
+    try:
+        cursor = mysql.connection.cursor()
+
+        # Eliminar el producto
+        cursor.execute("""
+            DELETE FROM carrito 
+            WHERE id_carrito = %s;
+        """, (id_carrito,))
+
+        mysql.connection.commit()
+
+        # Verificar si realmente se eliminó algo
+        if cursor.rowcount == 0:
+            mensaje = "El producto no estaba en el carrito."
+        else:
+            mensaje = "Producto eliminado correctamente."
+
         cursor.close()
-        return f"Error al introducir en carrito: {e}", 500
+        return jsonify({"mensaje": mensaje}), 200
+
+    except Exception as e:
+        mysql.connection.rollback()
+        if cursor:
+            cursor.close()
+        return jsonify({"error": f"Error al eliminar del carrito: {e}"}), 500
 
     
 

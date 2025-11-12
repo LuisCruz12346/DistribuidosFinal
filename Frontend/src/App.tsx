@@ -64,6 +64,7 @@ useEffect(() => {
       if (data.success) {
         setCart(data.cart);
         console.log("Carrito cargado:", data.cart);
+
       } else {
         console.warn(data.message);
       }
@@ -83,23 +84,61 @@ useEffect(() => {
 //  }
 // }, [cart, user]);
 
-  const addToCart = (product: Product) => {
-    setCart(prev => {
-      const existing = prev.find(item => item.id === product.id);
-      if (existing) {
-        return prev.map(item =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
-      }
-      return [...prev, { ...product, quantity: 1 }];
+// Anadir al carrito Listo
+const addToCart = async (product: Product) => {
+  try {
+    const response = await fetch("http://localhost:5000/AgreCarrito", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include", // importante para mantener la sesión
+      body: JSON.stringify({
+        id_producto: product.id
+      }),
     });
-  };
 
-  const removeFromCart = (productId: string) => {
-    setCart(prev => prev.filter(item => item.id !== productId));
-  };
+    const data = await response.json();
+
+    if (response.ok) {
+      console.log(" Producto agregado:", data);
+    } else {
+      console.error(" Error al agregar producto:", data.error || data);
+    }
+  } catch (error) {
+    console.error(" Error de red:", error);
+  }
+};
+
+// Remover producto de carrito CASI LISTO
+const removeFromCart = async (productId: string) => {
+  try {
+    const response = await fetch("http://localhost:5000/borCarr", {
+      method: "POST", // podrías usar DELETE si lo ajustas también en Flask
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include", // mantiene la sesión activa
+      body: JSON.stringify({
+        id_carrito: productId
+      }),
+    });
+    console.log("Salio esto  ", productId)
+    const data = await response.json();
+
+    if (response.ok) {
+      console.log("Producto borrado del carrito:", data.mensaje);
+      // Aquí podrías actualizar el estado local del carrito:
+      // setCart(prev => prev.filter(item => item.id !== productId));
+    } else {
+      console.error("Error al borrar el producto:", data.error || data);
+    }
+
+  } catch (error) {
+    console.error("Error de red:", error);
+  }
+};
+
 
   const updateQuantity = (productId: string, quantity: number) => {
     if (quantity <= 0) {
