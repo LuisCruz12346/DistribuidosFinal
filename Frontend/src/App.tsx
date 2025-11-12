@@ -41,24 +41,33 @@ export default function App() {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
 
+  // Al iniciar, intenta recuperar el usuario
   useEffect(() => {
-    // Cargar usuario del localStorage
-    const savedUser = localStorage.getItem('user');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    }
+  const savedUser = localStorage.getItem('user');
+  if (savedUser) {
+    setUser(JSON.parse(savedUser));
+  }
+}, []);
 
-    // Cargar carrito del localStorage
+// Si el usuario existe, carga su carrito
+useEffect(() => {
+  if (user) {
     const savedCart = localStorage.getItem('cart');
     if (savedCart) {
       setCart(JSON.parse(savedCart));
     }
-  }, []);
+  } else {
+    // Si no hay usuario, limpiar el carrito
+    setCart([]);
+  }
+}, [user]);
 
-  useEffect(() => {
-    // Guardar carrito en localStorage
+// Guardar carrito cada vez que cambia
+useEffect(() => {
+  if (user) { // solo si hay usuario logueado
     localStorage.setItem('cart', JSON.stringify(cart));
-  }, [cart]);
+  }
+}, [cart, user]);
 
   const addToCart = (product: Product) => {
     setCart(prev => {
@@ -132,6 +141,7 @@ const logout = async () => {
 
     setUser(null);
     localStorage.removeItem("user");
+    localStorage.removeItem('cart');
     setCurrentPage("home");
 
   } catch (error) {
@@ -168,7 +178,6 @@ const register = async (userData: User) => {
     return false;
   }
 };
-
 
 
   const addOrder = (order: Order) => {
