@@ -57,8 +57,7 @@ VALUES
 ('luis@example.com', 'Av. Central 234', 'Luis', 'Gomez', 'abcdef'),
 ('maria.perez@tienda.com', 'Calle Los Pinos 5, Apt. 2', 'María', 'Pérez Sánchez', 'pass_seguro_1'),
 ('roberto.g@tienda.com', 'Av. Libertad 456, Col. Sur', 'Roberto', 'García López', 'pass_seguro_2'),
-('elena.v@tienda.com', 'Blvd. Principal 101, C.P. 500', 'Elena', 'Valdés', 'pass_seguro_3'),
-('sara@tienda.com', 'Casa1, C.P. 1', 'Sara', 'Val', 'pas');
+('elena.v@tienda.com', 'Blvd. Principal 101, C.P. 500', 'Elena', 'Valdés', 'pass_seguro_3');
 
 
 INSERT INTO productos (nombre, precio, categoria)
@@ -80,5 +79,6 @@ INSERT INTO detalle_compra (id_compra, id_producto, cantidad, subtotal)
 VALUES
 (1, 1, 2, 1041.00),
 (2, 2, 1, 899.99);
+
 
 COMMIT;
