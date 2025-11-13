@@ -305,16 +305,14 @@ def borCarr():
 # Comprar, se considera que recibe todas las opciones de su carrito, que esta marcado y va guardando los
 #   valores en la tabla de compras
 # Comprar productos del carrito
-@app.route("/compra", methods=["GET"])
+@app.route("/compra", methods=["POST"])
 def compra():
     if 'id_cliente' not in session:
-        return "No hay usuario logeado", 401
+        return jsonify({"error": "No hay usuario logeado"}), 401
 
     id_cliente = session['id_cliente']
-
     cursor = mysql.connection.cursor()
 
-    # Obtener datos del carrito con los precios de productos
     cursor.execute("""
         SELECT carrito.cantidad, productos.precio, carrito.id_producto
         FROM carrito
@@ -322,37 +320,38 @@ def compra():
         WHERE carrito.id_cliente = %s;
     """, (id_cliente,))
     datos = cursor.fetchall()
-    # Sino tienen productos no realizar la accion 
+
     if len(datos) == 0:
         cursor.close()
-        return "Carrito vacío" # Referenciar con carrito vacio
+        return jsonify({"error": "Carrito vacío"}), 400
 
-    # Calcular total de la compra
-    total = sum(cantidad * precio for cantidad, precio, _ in datos)
+    total = sum(cantidad * precio for cantidad, precio, _ in datos) + 150
 
     try:
-        # 1. Insertar compra
         cursor.execute("INSERT INTO compras (id_cliente, total) VALUES (%s, %s);", (id_cliente, total))
-        id_compra = cursor.lastrowid  # ID generado
+        id_compra = cursor.lastrowid
 
-        # 2. Insertar detalle de compra
         for cantidad, precio, id_producto in datos:
             cursor.execute("""
-                INSERT INTO detalle_compra(id_compra, id_producto, cantidad, subtotal)
+                INSERT INTO detalle_compra (id_compra, id_producto, cantidad, subtotal)
                 VALUES (%s, %s, %s, %s);
             """, (id_compra, id_producto, cantidad, precio))
 
-        # 3. Vaciar el carrito
         cursor.execute("DELETE FROM carrito WHERE id_cliente = %s;", (id_cliente,))
-
         mysql.connection.commit()
         cursor.close()
 
-        return render_template('siesta.html')  # Pagina de compra exitosa
+        return jsonify({
+            "success": True,
+            "message": "Compra realizada con éxito",
+            "id_compra": id_compra,
+            "total": total
+        }), 200
 
     except Exception as e:
-        mysql.connection.rollback()  # Si algo falla, deshacer compra
+        mysql.connection.rollback()
         cursor.close()
-        return f"Error en compra: {e}", 500
+        return jsonify({"error": f"Error en compra: {str(e)}"}), 500
+
 
 

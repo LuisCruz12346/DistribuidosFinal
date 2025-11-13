@@ -233,13 +233,30 @@ const register = async (userData: User) => {
   }
 };
 
+// Cada vez que hay una confirmacion de orden se guardan en la seccion de compras
+const addOrder = async (order: Order) => {
+  if (!user) return;
+  try {
+    const response = await fetch("http://localhost:5000/compra", {
+      method: "POST",
+      credentials: "include", // Mantiene la sesión
+      headers: {
+        "Content-Type": "application/json",
+      },
+      //body: JSON.stringify({productos: order.products, total : order.total}), // Enviamos la orden si es necesario
+    });
 
-const addOrder = (order: Order) => {
-    if (!user) return;
-    const orders = JSON.parse(localStorage.getItem(`orders_${user.email}`) || '[]');
-    orders.push(order);
-    localStorage.setItem(`orders_${user.email}`, JSON.stringify(orders));
-  };
+    if (!response.ok) {
+      throw new Error(`Error HTTP: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log("Compra procesada correctamente:", data);
+
+  } catch (error) {
+    console.error("Error al procesar la compra:", error);
+  }
+};
 
   const getOrders = (): Order[] => {
     if (!user) return [];
