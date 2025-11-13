@@ -261,6 +261,51 @@ def AgreCarrito():
             cursor.close()
         return jsonify({"error": f"Error al agregar al carrito: {e}"}), 500
 
+# Modificar Carrito
+@app.route("/ModCarrito", methods=["POST"])
+def ModCarrito():
+    if 'id_cliente' not in session:
+        return jsonify({"error": "No hay usuario logeado"}), 401
+
+    data = request.get_json()
+    id_carrito = data.get("id_carrito")
+    cantidad = data.get("cantidad")
+
+    # Validaciones básicas
+    if not id_carrito or cantidad is None or cantidad <= 0:
+        return jsonify({"error": "Datos inválidos"}), 400
+
+    cursor = mysql.connection.cursor()
+
+    # Verificar que el carrito pertenezca al cliente en sesión
+    cursor.execute("""
+        SELECT id_carrito FROM carrito
+        WHERE id_carrito = %s AND id_cliente = %s;
+    """, (id_carrito, session['id_cliente']))
+    item = cursor.fetchone()
+
+    if not item:
+        cursor.close()
+        return jsonify({"error": "Elemento no encontrado o no autorizado"}), 403
+
+    try:
+        cursor.execute("""
+            UPDATE carrito SET cantidad = %s
+            WHERE id_carrito = %s AND id_cliente = %s;
+        """, (cantidad, id_carrito, session['id_cliente']))
+
+        mysql.connection.commit()
+        cursor.close()
+
+        return jsonify({"success": True, "message": "Cantidad actualizada correctamente"}), 200
+
+    except Exception as e:
+        mysql.connection.rollback()
+        return jsonify({"error": f"Error al modificar carrito: {str(e)}"}), 500
+    finally:
+        cursor.close()
+
+
 # Borrar un producto del carrito
 @app.route("/borCarr", methods=["POST"])
 def borCarr():

@@ -65,14 +65,14 @@ export function Cart({ user, cart, onNavigate, onUpdateQuantity, onRemoveFromCar
                     <p className="text-gray-600 mb-2">${item.price.toLocaleString()}</p>
                     <div className="flex items-center gap-2">
                       <button
-                        onClick={() => onUpdateQuantity(item.id, item.quantity - 1)}
+                        onClick={() => onUpdateQuantity(item.id_carrito, item.quantity - 1)}
                         className="w-8 h-8 border rounded flex items-center justify-center hover:bg-gray-100"
                       >
                         -
                       </button>
                       <span className="w-8 text-center">{item.quantity}</span>
                       <button
-                        onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
+                        onClick={() => onUpdateQuantity(item.id_carrito, item.quantity + 1)}
                         className="w-8 h-8 border rounded flex items-center justify-center hover:bg-gray-100"
                       >
                         +

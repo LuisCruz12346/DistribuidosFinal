@@ -139,23 +139,46 @@ const removeFromCart = async (productId: string) => {
   }
 };
 
+// Modicar la cantidad de productos en el carrito
+const updateQuantity = async (productId: string, quantity: number) => {
+  if (quantity <= 0) {
+    removeFromCart(productId);
+    return;
+  }
 
-  const updateQuantity = (productId: string, quantity: number) => {
-    if (quantity <= 0) {
-      removeFromCart(productId);
+  try {
+    const response = await fetch("http://localhost:5000/ModCarrito", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include", // mantiene la sesión activa
+      body: JSON.stringify({
+        id_carrito: productId,
+        cantidad: quantity,
+      }),
+    });
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("Error al actualizar carrito:", errorData.error);
       return;
     }
-    setCart(prev =>
-      prev.map(item =>
-        item.id === productId ? { ...item, quantity } : item
-      )
-    );
-  };
 
+    const data = await response.json();
+    console.log("Cantidad actualizada correctamente:", data.message);
+
+  } catch (error) {
+    console.error("Error de conexión con el servidor:", error);
+  }
+};
+
+  
+// Se borra el carrito
   const clearCart = () => {
     setCart([]);
     localStorage.setItem('cart', JSON.stringify([]));
   };
+
 // Inicio de sesion listo
   const login = async (email: string, password: string) => {
   try {
