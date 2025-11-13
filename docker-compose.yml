@@ -29,6 +29,7 @@ services:
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
       - ./db_data:/var/lib/mysql
+      - ./mysql.cnf:/etc/mysql/conf.d/mysql.cnf
     ports:
       - "3306:3306"
     networks:
@@ -48,3 +49,4 @@ services:
 networks:
   shopnet:
     driver: bridge
+
