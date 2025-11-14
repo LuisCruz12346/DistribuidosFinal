@@ -49,8 +49,9 @@ Con esto podrian ver las tablas con datos....
 
 ## otros comandos utiles
 
-docker-compose down # Detiene y elimina contenedores viejos
-docker-compose down -v
+* docker-compose down # Detiene y elimina contenedores viejos
+* docker-compose down -v
+
 
 
 
