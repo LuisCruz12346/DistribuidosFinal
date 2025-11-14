@@ -29,10 +29,10 @@ http://localhost:8080 Tienda virtual
 adminer:
 http://localhost:8081/?server=db&username=root
 
-servidor db
-usuario: root
-contraseña: 1234
-profinal
+* servidor db
+* usuario: root
+* contraseña: 1234
+* profinal
 
 4. Probar los datos de las tablas
 
@@ -51,6 +51,7 @@ Con esto podrian ver las tablas con datos....
 
 docker-compose down # Detiene y elimina contenedores viejos
 docker-compose down -v
+
 
 
 
