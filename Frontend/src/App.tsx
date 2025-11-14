@@ -43,11 +43,11 @@ export default function App() {
 
   // Al iniciar, intenta recuperar el usuario
   useEffect(() => {
-  const savedUser = localStorage.getItem('user');
-  if (savedUser) {
-    setUser(JSON.parse(savedUser));
-  }
-}, []);
+    const savedUser = localStorage.getItem('user');
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
+  }, []);
 
 // Si el usuario existe, carga su carrito PARCIALMENTE LISTO
 useEffect(() => {
@@ -55,7 +55,8 @@ useEffect(() => {
     if (!user) return;
 
     try {
-      const response = await fetch("http://localhost:5000/carrito", {
+      // CORREGIDO: Usando /api/carrito
+      const response = await fetch("/api/carrito", {
         method: "GET",
         credentials: "include", // enviar cookies de sesión
       });
@@ -79,9 +80,9 @@ useEffect(() => {
 
 // Guardar carrito cada vez que cambia
 //useEffect(() => {
-//  if (user) { // solo si hay usuario logueado
-//    localStorage.setItem('cart', JSON.stringify(cart));
-//  }
+//  if (user) { // solo si hay usuario logueado
+//    localStorage.setItem('cart', JSON.stringify(cart));
+//  }
 // }, [cart, user]);
 
 // Funcion para actualizar los productos del carrito
@@ -109,7 +110,8 @@ const RefreshCart = async () => {
 // Anadir al carrito Listo
 const addToCart = async (product: Product) => {
   try {
-    const response = await fetch("http://localhost:5000/AgreCarrito", {
+    // CORREGIDO: Usando /api/AgreCarrito
+    const response = await fetch("/api/AgreCarrito", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -135,7 +137,8 @@ const addToCart = async (product: Product) => {
 // Remover producto de carrito CASI LISTO
 const removeFromCart = async (productId: string) => {
   try {
-    const response = await fetch("http://localhost:5000/borCarr", {
+    // CORREGIDO: Usando /api/borCarr
+    const response = await fetch("/api/borCarr", {
       method: "POST", // podrías usar DELETE si lo ajustas también en Flask
       headers: {
         "Content-Type": "application/json",
@@ -156,26 +159,27 @@ const removeFromCart = async (productId: string) => {
     }
 
   } catch (error) {
-    console.error("Error de red:", error);
+    console.error(" Error de red:", error);
   }
 };
 
 // Modicar la cantidad de productos en el carrito
-const updateQuantity = async (productId: string, quantity: number) => {
+const updateQuantity = async (id_carrito: string, quantity: number) => {
   if (quantity <= 0) {
-    removeFromCart(productId);
+    removeFromCart(id_carrito);
     return;
   }
 
   try {
-    const response = await fetch("http://localhost:5000/ModCarrito", {
+    // CORREGIDO: Usando /api/ModCarrito
+    const response = await fetch("/api/ModCarrito", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       credentials: "include", // mantiene la sesión activa
       body: JSON.stringify({
-        id_carrito: productId,
+        id_carrito: id_carrito,
         cantidad: quantity,
       }),
     });
@@ -204,7 +208,8 @@ const updateQuantity = async (productId: string, quantity: number) => {
 // Inicio de sesion listo
   const login = async (email: string, password: string) => {
   try {
-      const response = await fetch("http://localhost:5000/login", {
+      // CORREGIDO: Usando /api/login
+      const response = await fetch("/api/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({email, password }),
@@ -232,9 +237,10 @@ const updateQuantity = async (productId: string, quantity: number) => {
 // Salir de sesion LISTO
 const logout = async () => {
   try {
-    await fetch("http://localhost:5000/logout", {
+    // CORREGIDO: Usando /api/logout
+    await fetch("/api/logout", {
       method: "GET",
-      credentials: "include",   // <<< IMPORTANTE PARA BORRAR SESIÓN
+      credentials: "include",   // <<< IMPORTANTE PARA BORRAR SESIÓN
     });
 
     setUser(null);
@@ -251,10 +257,11 @@ const logout = async () => {
 // Registrarse Nuevo usuarios LISTO
 const register = async (userData: User) => {
   try {
-    const response = await fetch("http://localhost:5000/register", {
+    // CORREGIDO: Usando /api/register
+    const response = await fetch("/api/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      credentials: "include",        // <<< Necesario si usas sesión
+      credentials: "include",        // <<< Necesario si usas sesión
       body: JSON.stringify(userData)
     });
 
@@ -282,7 +289,8 @@ const register = async (userData: User) => {
 const addOrder = async (order: Order) => {
   if (!user) return;
   try {
-    const response = await fetch("http://localhost:5000/compra", {
+    // CORREGIDO: Usando /api/compra
+    const response = await fetch("/api/compra", {
       method: "POST",
       credentials: "include", // Mantiene la sesión
       headers: {
@@ -311,7 +319,8 @@ const addOrder = async (order: Order) => {
 // Buscar productos en la base de datos LISTO
 const handleSearch = async (query: string) => {
   try {
-    const response = await fetch("http://localhost:5000/productos", {
+    // CORREGIDO: Usando /api/productos
+    const response = await fetch("/api/productos", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ query }), // Enviar el texto de búsqueda
