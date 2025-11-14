@@ -84,6 +84,28 @@ useEffect(() => {
 //  }
 // }, [cart, user]);
 
+// Funcion para actualizar los productos del carrito
+const RefreshCart = async () => {
+  try {
+    const response = await fetch("http://localhost:5000/carrito", {
+      method: "GET",
+      credentials: "include",
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      setCart(data.cart);  // actualiza el estado
+      console.log("Carrito cargado:", data.cart);
+    } else {
+      console.warn(data.message);
+    }
+
+  } catch (error) {
+    console.error("Error al obtener carrito:", error);
+  }
+};
+
 // Anadir al carrito Listo
 const addToCart = async (product: Product) => {
   try {
@@ -123,13 +145,12 @@ const removeFromCart = async (productId: string) => {
         id_carrito: productId
       }),
     });
-    console.log("Salio esto  ", productId)
+  
     const data = await response.json();
 
     if (response.ok) {
       console.log("Producto borrado del carrito:", data.mensaje);
-      // Aquí podrías actualizar el estado local del carrito:
-      // setCart(prev => prev.filter(item => item.id !== productId));
+      RefreshCart();
     } else {
       console.error("Error al borrar el producto:", data.error || data);
     }
@@ -165,6 +186,7 @@ const updateQuantity = async (productId: string, quantity: number) => {
     }
 
     const data = await response.json();
+    RefreshCart();
     console.log("Cantidad actualizada correctamente:", data.message);
 
   } catch (error) {
@@ -357,6 +379,7 @@ const handleSearch = async (query: string) => {
           onUpdateQuantity={updateQuantity}
           onRemoveFromCart={removeFromCart}
           onLogout={logout}
+          onRefreshCart={RefreshCart}
         />
       )}
       {currentPage === 'checkout' && (

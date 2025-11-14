@@ -1,3 +1,4 @@
+import {useEffect} from 'react';
 import { Header } from './Header';
 import { CartItem, User } from '../App';
 import { Trash2 } from 'lucide-react';
@@ -9,13 +10,21 @@ type CartProps = {
   onUpdateQuantity: (productId: string, quantity: number) => void;
   onRemoveFromCart: (productId: string) => void;
   onLogout: () => void;
+  onRefreshCart: () => void;
 };
 
 const SHIPPING_COST = 150;
 
-export function Cart({ user, cart, onNavigate, onUpdateQuantity, onRemoveFromCart, onLogout }: CartProps) {
+export function Cart({ user, cart, onNavigate, onUpdateQuantity, onRemoveFromCart, onLogout,onRefreshCart }: CartProps) {
+  
+  useEffect(() => {
+    onRefreshCart(); // <-- Recargar carrito al entrar a la página
+  }, []);
+  
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const total = subtotal + SHIPPING_COST;
+  
+  
   console.log("Soy el carrito")
   console.log(cart); 
 
