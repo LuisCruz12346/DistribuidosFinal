@@ -1,7 +1,7 @@
 
-## Consideraciones
+# Consideraciones
 
-4 contenedores nuevos en el archivo de *docker-compose.yml*:
+## 4 contenedores nuevos en el archivo de *docker-compose.yml*:
 
 * frontend
 * backend
@@ -46,6 +46,7 @@ USE profinal
 SELECT * FROM cliente;
 
 Con esto podrian ver las tablas con datos....
+
 
 
 
