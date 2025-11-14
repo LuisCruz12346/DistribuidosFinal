@@ -1,0 +1,172 @@
+<!-- Buscar productos-->
+<!-- 
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Búsqueda de productos</title>
+</head>
+<body>
+
+    <h1>Buscar productos</h1>
+
+    
+    <form action="/productos" method="POST">
+        <label for="producto">Nombre del producto:</label>
+        <input type="text" id="producto" name="producto" placeholder="Ej. Coca|Pepsi" required>
+        <button type="submit">Buscar por nombre</button>
+    </form>
+
+    <hr>
+
+    <h2>Buscar por categoría</h2>
+    <form action="/categoria" method="POST">
+        <label for="categoria">Categoría:</label>
+        <input type="text" id="categoria" name="categoria" placeholder="Ej. Bebidas" required>
+        <button type="submit">Buscar por categoría</button>
+    </form>
+
+</body>
+</html>
+ -->
+
+
+<!-- LOG IN -->
+
+ <!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Sistema de Compras</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-box {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            width: 320px;
+            box-shadow: 0 0 10px rgba(0,0,0,.2);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 5px;
+            border: 1px solid gray;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background: blue;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background: #002eed;
+            cursor: pointer;
+        }
+    </style>
+
+</head>
+<body>
+
+    <form action="/login" method="POST" class="login-box">
+        <h2>Iniciar sesión</h2>
+
+        <input type="email" name="email" placeholder="Correo electrónico" required>
+        <input type="password" name="password" placeholder="Contraseña" required>
+
+        <button type="submit">Entrar</button>
+    </form>
+
+</body>
+</html>
+
+<!--
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de usuario</title>
+    <style>
+        body {
+            font-family: Arial;
+            background-color: #f0f0f0;
+        }
+        .container {
+            width: 350px;
+            margin: 70px auto;
+            padding: 25px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px gray;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin: 6px 0;
+        }
+        button {
+            width: 100%;
+            padding: 8px;
+            margin-top: 10px;
+            background-color: #0077cc;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: #005fa3;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>Crear cuenta</h2>
+
+    <form action="/Sing" method="POST">
+        <label>Email:</label>
+        <input type="email" name="email" placeholder="correo@example.com" required>
+
+        <label>Nombre:</label>
+        <input type="text" name="nombre" placeholder="Nombre" required>
+
+        <label>Apellido(s):</label>
+        <input type="text" name="apellido" placeholder="Apellido" required>
+
+        <label>Dirección:</label>
+        <input type="text" name="direccion" placeholder="Dirección" required>
+
+        <label>Contraseña:</label>
+        <input type="password" name="password" placeholder="Contraseña" required>
+
+        <button type="submit">Registrar</button>
+    </form>
+</div>
+
+</body>
+</html>
+-->
