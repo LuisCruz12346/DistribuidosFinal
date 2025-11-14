@@ -1,7 +1,7 @@
 
 # Consideraciones
 
-## 4 contenedores el archivo de *docker-compose.yml*:
+## 4 contenedores en el archivo de *docker-compose.yml*:
 
 * frontend
 * backend
@@ -50,6 +50,7 @@ Con esto podrian ver las tablas con datos....
 ## otros comandos utiles
 
 * docker-compose down -v # es mas util este que elimina todo,  detiene y elimina contenedores viejos
+
 
 
 
