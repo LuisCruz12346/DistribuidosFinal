@@ -1,0 +1,5 @@
+[mysqld]
+# Permite conexiones de hosts que no sean localhost
+bind-address = 0.0.0.0
+# Deshabilita la resolución inversa de DNS para acelerar la conexión
+skip-name-resolve
