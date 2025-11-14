@@ -34,7 +34,7 @@ http://localhost:8081/?server=db&username=root
 * contraseña: 1234
 * profinal
 
-4. Probar los datos de las tablas
+4. Probar los datos de las tablas en la consola
 
 docker exec -it distribuidosfinal-main-db-1 mysql -u root -p
 
@@ -50,6 +50,7 @@ Con esto podrian ver las tablas con datos....
 ## otros comandos utiles
 
 * docker-compose down -v # es mas util este que elimina todo,  detiene y elimina contenedores viejos
+
 
 
 
